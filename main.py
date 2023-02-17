@@ -8,6 +8,8 @@ import SVD_recommend as svd
 
 if __name__ == '__main__':
     some_user_id = input('유저 ID를 입력하세요 : ')
+
+    # 전처리 
     file_info = [
             {
                 'f_name' : '/Users/seunghoonchoi/Downloads/SKKU KDT 2기/프로젝트/5차/BX-CSV-Dump/BX-Book-Ratings.csv',
@@ -26,10 +28,11 @@ if __name__ == '__main__':
                     'sep' : ';',
                     'col_names' : ['User-ID', 'Location', 'Age']
                 }
-            ]
-    # 유저 베이스        
+            ]      
     df1, df2 = prep.preprocessing_pipeline(file_info)
     df3, df4, df5 = prep.preprocessing_pipeline2(file_info2)
+
+    # 유저 베이스
     recom1 = ub.recommend1_state(df1, df2, df3, some_user_id)
     recom2 = ub.recommend2_age(df1, df2, df3, df4, df5, some_user_id)
     user_recommend = ub.user_based_recommend(recom1, recom2)
@@ -55,7 +58,8 @@ if __name__ == '__main__':
     pred = svd.run_model(df1, svd_model, some_user_id)
     svd_top_books = svd.SVD_recommend(df1, df2, pred, some_user_id, top_k = 5)
     
+    # 결과
     total_df = pd.concat([user_recommend, cont_based_recommend, knn_top_books, svd_top_books], axis=0).drop_duplicates()[:10]
 
-    print(f'{some_user_id}님께서 관심가질만한 10권의 책을 추천합니다.')
+    print(f'{some_user_id}번 유저님께서 관심가질만한 10권의 책을 추천합니다.')
     print(total_df)
